@@ -3,13 +3,12 @@ import os
 
 import discord
 from datetime import datetime, time
+from pytz import timezone
 
-TOKEN = "*"
+TOKEN = "#"
 GUILD = "MONITORIA PD"
 
 client = discord.Client()
-
-
 
 horarios = {
     'Nicolas': {
@@ -53,12 +52,15 @@ horarios = {
 
 
 def moni_agora(hoje, dia_da_semana):
-    horario = hoje.time()
+    tz = timezone('America/Sao_Paulo')
+    utc_time = datetime.utcnow()
+    horario = tz.fromutc(utc_time).time()
+    #horario = hoje.time()
     disponiveis = []
     for nome, disponibilidade in horarios.items(): # para cada monitor
         if dia_da_semana in disponibilidade: # se atende no dia   
-            for inicio, fim in disponibilidade[dia_da_semana]:              
-                if inicio < horario < fim:
+            for inicio, fim in disponibilidade[dia_da_semana]:
+                if inicio <= horario < fim:
                     disponiveis.append(nome)
                     break
     if disponiveis:
